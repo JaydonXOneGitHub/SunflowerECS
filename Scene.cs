@@ -4,8 +4,8 @@ namespace SunflowerECS
 {
     public delegate void EntityEvent(Entity entity);
     public delegate void ComponentEvent(IComponent component);
-
-    public sealed class Scene
+    
+    public sealed class Scene : IDisposable
     {
         private readonly Dictionary<uint, Entity> _entities;
     
@@ -142,6 +142,15 @@ namespace SunflowerECS
                 return system as T;
             }
             return null;
+        }
+    
+        public void Dispose()
+        {
+            foreach (var entity in _entities.Values)
+            {
+                entity.Dispose();
+            }
+            _entities.Clear();
         }
     }
 }
