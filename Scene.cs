@@ -8,21 +8,23 @@ namespace SunflowerECS
     public sealed class Scene
     {
         private readonly Dictionary<uint, Entity> _entities;
-
+    
         private readonly Dictionary<Type, ISystem> _systems;
-
+    
         private EntityEvent OnEntityAdded;
         private EntityEvent OnEntityRemoved;
-
+    
         internal ComponentEvent OnComponentAdded;
         internal ComponentEvent OnComponentRemoved;
-
+    
+        private uint nextID = 0;
+    
         public Scene()
         {
             _entities = [];
             _systems = [];
         }
-
+    
         public bool AddSystem(ISystem system)
         {
             bool valid = _systems.TryAdd(system.GetType(), system);
@@ -36,11 +38,11 @@ namespace SunflowerECS
             }
             return valid;
         }
-
+    
         public bool RemoveSystem(ISystem system)
         {
             bool removed = _systems.Remove(system.GetType());
-
+    
             if (removed)
             {
                 OnEntityAdded -= system.OnEntityAdded;
@@ -48,59 +50,69 @@ namespace SunflowerECS
                 OnEntityRemoved -= system.OnEntityRemoved;
                 OnComponentRemoved -= system.OnComponentRemoved;
             }
-
+    
             return removed;
         }
-
+    
         public Entity Create()
         {
             Entity entity = new Entity(this);
-            entity.ID = Roll();
+            entity.ID = nextID;
+            nextID++;
             _entities[entity.ID] = entity;
             return entity;
         }
-
+    
         public void AddEntity(Entity entity)
         {
             if (_entities.ContainsKey(entity.ID)) { return; }
-
+    
             _entities[entity.ID] = entity;
-
+    
             OnEntityAdded?.Invoke(entity);
         }
-
+    
+        public Entity? GetByID(uint id)
+        {
+            if (_entities.TryGetValue(id, out var entity))
+            {
+                return entity;
+            }
+            return null;
+        }
+    
         public bool RemoveEntity(Entity entity)
         {
             bool removed = _entities.Remove(entity.ID);
-
+    
             if (removed)
             {
                 OnEntityRemoved?.Invoke(entity);
             }
-
+    
             return removed;
         }
-
+    
         public void UpdateBehaviour()
         {
             if (_systems.TryGetValue(typeof(BehaviourSystem), out ISystem? system))
             {
                 BehaviourSystem behaviourSystem = (BehaviourSystem)system;
-
+    
                 behaviourSystem.Update();
             }
         }
-
+    
         public void DrawBehaviour()
         {
             if (_systems.TryGetValue(typeof(BehaviourSystem), out ISystem? system))
             {
                 BehaviourSystem behaviourSystem = (BehaviourSystem)system;
-
+    
                 behaviourSystem.Draw();
             }
         }
-
+    
         public void UpdateGeneral()
         {
             Parallel.ForEach(_systems.Values, system =>
@@ -111,7 +123,7 @@ namespace SunflowerECS
                 }
             });
         }
-        
+    
         public void DrawGeneral()
         {
             Parallel.ForEach(_systems.Values, system =>
@@ -122,7 +134,7 @@ namespace SunflowerECS
                 }
             });
         }
-
+    
         public T? GetSystem<T>() where T : class, ISystem
         {
             if (_systems.TryGetValue(typeof(T), out ISystem? system))
@@ -130,23 +142,6 @@ namespace SunflowerECS
                 return system as T;
             }
             return null;
-        }
-
-        private uint Roll()
-        {
-            uint result = TrueRoll();
-
-            while (_entities.ContainsKey(result))
-            {
-                result = TrueRoll();
-            }
-
-            return result;
-        }
-
-        private uint TrueRoll()
-        {
-            return (uint)(new Random().Next(0, 100000000));
         }
     }
 }
