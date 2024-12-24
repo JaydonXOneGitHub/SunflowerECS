@@ -17,6 +17,57 @@ If using a terminal, open the folder containing the solution. Then type the foll
 
 # How to Use
 
-First, create a Scene:
+Create a Scene:
 
 ```Scene scene = new Scene();```
+
+Create your custom component types.
+Create a custom system based on IUpdateSystem and/or IDrawSystem.
+
+Example:
+
+```scene.AddSystem(new BehaviourSystem());```
+
+BehaviourSystem is a type built into this library.
+
+In order to use it in your application, use:
+
+```scene.UpdateBehaviour();```
+
+and
+
+```scene.DrawBehaviour();```
+
+To use your own systems in the same manner, use:
+
+```scene.UpdateGeneral();```
+
+and
+
+```scene.DrawGeneral();```
+
+Create an Entity by doing this:
+
+```Entity entity = scene.Create();```
+
+The Entity in question will have a randomly generated ID.
+
+Attach components by using:
+
+```entity.AddComponent<YourComponentType>();```
+
+You can store the instance by using:
+
+```var yourComponent = entity.AddComponent<YourComponentType>();```
+
+Alternatively, you can add an existing component by using:
+
+```entity.AddComponent<YourComponentType>(yourComponent);```
+
+To remove them, use:
+
+```entity.RemoveComponent<YourComponentType>(yourComponent);```
+
+To retrieve them, use:
+
+```entity.GetComponent<YourComponentType>();```
