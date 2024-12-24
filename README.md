@@ -1,6 +1,7 @@
 # SunflowerECS
  
-SunflowerECS is an ECS (well, more akin to Unity's approach, but still) designed to be used in whatever kind of C# application you wish.
+SunflowerECS is a hybrid entity-component library designed to be used in whatever kind of C# application you wish.<br>
+...The name is probably a little misleading now, huh?
 
 # Requirements
 - .NET 8.0 or later
