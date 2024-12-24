@@ -103,24 +103,24 @@ namespace SunflowerECS
 
         public void UpdateGeneral()
         {
-            foreach (var system in _systems.Values)
+            Parallel.ForEach(_systems.Values, system =>
             {
                 if (system is IUpdateSystem updateSystem)
                 {
                     updateSystem.Update();
                 }
-            }
+            });
         }
-
+        
         public void DrawGeneral()
         {
-            foreach (var system in _systems.Values)
+            Parallel.ForEach(_systems.Values, system =>
             {
                 if (system is IDrawSystem drawSystem)
                 {
                     drawSystem.Draw();
                 }
-            }
+            });
         }
 
         public T? GetSystem<T>() where T : class, ISystem
