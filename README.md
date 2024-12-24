@@ -73,19 +73,5 @@ To retrieve them, use:
 
 ```entity.GetComponent<YourComponentType>();```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 *not really
