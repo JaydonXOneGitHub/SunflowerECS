@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SunflowerECS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2de8a88f7d0215b985c32821598a5caf4c7b6733")]
 [assembly: System.Reflection.AssemblyProductAttribute("SunflowerECS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SunflowerECS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

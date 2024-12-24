@@ -62,8 +62,7 @@
               "RelativeToolTip": "ComponentNotFoundException.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-24T12:24:41.054Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-24T12:24:41.054Z"
             },
             {
               "$type": "Document",
@@ -75,8 +74,7 @@
               "RelativeToolTip": "BehaviourSystem.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-24T02:14:58.791Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-24T02:14:58.791Z"
             },
             {
               "$type": "Document",
@@ -148,8 +146,7 @@
               "RelativeToolTip": "Entity.cs",
               "ViewState": "AgIAAD0AAAAAAAAAAAAcwEkAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-24T01:25:34.173Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-24T01:25:34.173Z"
             },
             {
               "$type": "Document",
@@ -159,7 +156,7 @@
               "RelativeDocumentMoniker": "Scene.cs",
               "ToolTip": "C:\\Users\\Jaydon\\source\\repos\\SunflowerECS\\Scene.cs",
               "RelativeToolTip": "Scene.cs",
-              "ViewState": "AgIAABQAAAAAAAAAAAAUwBkAAABCAAAAAAAAAA==",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAwwAcAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-24T01:25:04.959Z",
               "EditorCaption": ""

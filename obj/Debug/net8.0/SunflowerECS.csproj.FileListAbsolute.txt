@@ -9,3 +9,4 @@ C:\Users\Jaydon\source\repos\SunflowerECS\obj\Debug\net8.0\SunflowerECS.dll
 C:\Users\Jaydon\source\repos\SunflowerECS\obj\Debug\net8.0\refint\SunflowerECS.dll
 C:\Users\Jaydon\source\repos\SunflowerECS\obj\Debug\net8.0\SunflowerECS.pdb
 C:\Users\Jaydon\source\repos\SunflowerECS\obj\Debug\net8.0\ref\SunflowerECS.dll
+C:\Users\Jaydon\source\repos\SunflowerECS\obj\Debug\net8.0\SunflowerECS.sourcelink.json

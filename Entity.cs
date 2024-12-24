@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SunflowerECS
 {
-    public sealed class Entity
+    public sealed class Entity : IDisposable
     {
         public uint ID { get; internal set; }
 
@@ -48,7 +48,7 @@ namespace SunflowerECS
             }
         }
 
-        public void RemoveComponent<T>(T component) where T : class, IComponent
+        public void RemoveComponent(IComponent component)
         {
             if (component.Entity == null)
             {
@@ -78,6 +78,19 @@ namespace SunflowerECS
         public bool HasComponent<T>() where T : class, IComponent, new()
         {
             return GetComponent<T>() != null;
+        }
+
+        public void Dispose()
+        {
+            var tempComponents = new Dictionary<Type, IComponent>(components);
+
+            foreach (var typeAndComponent in tempComponents)
+            {
+                RemoveComponent(typeAndComponent.Value);
+            }
+
+            components.Clear();
+            tempComponents.Clear();
         }
     }
 }

@@ -5,7 +5,7 @@ namespace SunflowerECS
     public delegate void EntityEvent(Entity entity);
     public delegate void ComponentEvent(IComponent component);
 
-    public sealed class Scene
+    public sealed class Scene : IDisposable
     {
         private readonly Dictionary<uint, Entity> _entities;
 
@@ -16,6 +16,8 @@ namespace SunflowerECS
 
         internal ComponentEvent OnComponentAdded;
         internal ComponentEvent OnComponentRemoved;
+
+        private uint nextID = 0;
 
         public Scene()
         {
@@ -55,7 +57,8 @@ namespace SunflowerECS
         public Entity Create()
         {
             Entity entity = new Entity(this);
-            entity.ID = Roll();
+            entity.ID = nextID;
+            nextID++;
             _entities[entity.ID] = entity;
             return entity;
         }
@@ -67,6 +70,15 @@ namespace SunflowerECS
             _entities[entity.ID] = entity;
 
             OnEntityAdded?.Invoke(entity);
+        }
+
+        public Entity? GetByID(uint id)
+        {
+            if (_entities.TryGetValue(id, out var entity))
+            {
+                return entity;
+            }
+            return null;
         }
 
         public bool RemoveEntity(Entity entity)
@@ -103,41 +115,42 @@ namespace SunflowerECS
 
         public void UpdateGeneral()
         {
-            foreach (var system in _systems.Values)
+            Parallel.ForEach(_systems.Values, system =>
             {
                 if (system is IUpdateSystem updateSystem)
                 {
                     updateSystem.Update();
                 }
-            }
+            });
         }
 
         public void DrawGeneral()
         {
-            foreach (var system in _systems.Values)
+            Parallel.ForEach(_systems.Values, system =>
             {
                 if (system is IDrawSystem drawSystem)
                 {
                     drawSystem.Draw();
                 }
-            }
+            });
         }
 
-        private uint Roll()
+        public T? GetSystem<T>() where T : class, ISystem
         {
-            uint result = TrueRoll();
-
-            while (_entities.ContainsKey(result))
+            if (_systems.TryGetValue(typeof(T), out ISystem? system))
             {
-                result = TrueRoll();
+                return system as T;
             }
-
-            return result;
+            return null;
         }
 
-        private uint TrueRoll()
+        public void Dispose()
         {
-            return (uint)(new Random().Next(0, 100000000));
+            foreach (var entity in _entities.Values)
+            {
+                entity.Dispose();
+            }
+            _entities.Clear();
         }
     }
 }
