@@ -1,4 +1,6 @@
-﻿namespace SunflowerECS
+using SunflowerECS.Systems;
+
+namespace SunflowerECS
 {
     public delegate void EntityEvent(Entity entity);
     public delegate void ComponentEvent(IComponent component);
@@ -79,7 +81,7 @@
             return removed;
         }
 
-        public void Update()
+        public void UpdateBehaviour()
         {
             if (_systems.TryGetValue(typeof(BehaviourSystem), out ISystem? system))
             {
@@ -89,13 +91,35 @@
             }
         }
 
-        public void Draw()
+        public void DrawBehaviour()
         {
             if (_systems.TryGetValue(typeof(BehaviourSystem), out ISystem? system))
             {
                 BehaviourSystem behaviourSystem = (BehaviourSystem)system;
 
                 behaviourSystem.Draw();
+            }
+        }
+
+        public void UpdateGeneral()
+        {
+            foreach (var system in _systems.Values)
+            {
+                if (system is IUpdateSystem updateSystem)
+                {
+                    updateSystem.Update();
+                }
+            }
+        }
+
+        public void DrawGeneral()
+        {
+            foreach (var system in _systems.Values)
+            {
+                if (system is IDrawSystem drawSystem)
+                {
+                    drawSystem.Draw();
+                }
             }
         }
 
@@ -117,3 +141,4 @@
         }
     }
 }
+
