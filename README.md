@@ -73,5 +73,10 @@ To retrieve them, use:
 
 ```entity.GetComponent<YourComponentType>();```
 
+# How to Contribute
+
+If you wish to modify this to implement specific things in your own project, feel free to clone the repo and modify it from there!<br>
+Credits would be nice, but are not required.
+
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 *not really
