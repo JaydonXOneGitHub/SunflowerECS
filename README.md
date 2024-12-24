@@ -19,4 +19,4 @@ If using a terminal, open the folder containing the solution. Then type the foll
 
 First, create a Scene:
 
-<pre> ```csharp Scene scene = new Scene();``` </pre>
+```Scene scene = new Scene();```
