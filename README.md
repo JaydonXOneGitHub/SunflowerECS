@@ -19,4 +19,4 @@ If using a terminal, open the folder containing the solution. Then type the foll
 
 First, create a Scene:
 
-`Scene scene = new Scene();`
+```cs Scene scene = new Scene();```
