@@ -1,6 +1,6 @@
 # SunflowerECS
  
-SunflowerECS is an ECS* designed to be used in whatever kind of C# application you wish.
+SunflowerECS is an ECS (well, more akin to Unity's approach, but still) designed to be used in whatever kind of C# application you wish.
 
 # Requirements
 - .NET 8.0 or later
@@ -77,6 +77,3 @@ To retrieve them, use:
 
 If you wish to modify this to implement specific things in your own project, feel free to clone the repo and modify it from there!<br>
 Credits would be nice, but are not required.
-
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-*not really
