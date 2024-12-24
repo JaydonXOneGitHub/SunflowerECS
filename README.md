@@ -21,7 +21,8 @@ Create a Scene:
 
 ```Scene scene = new Scene();```
 
-Create your custom component types.
+Create your custom component types.<br><br>
+
 Create a custom system based on IUpdateSystem and/or IDrawSystem.
 
 Example:
