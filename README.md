@@ -1,6 +1,6 @@
 # SunflowerECS
  
-SunflowerECS is an ECS designed to be used in whatever kind of C# application you wish.
+SunflowerECS is an ECS* designed to be used in whatever kind of C# application you wish.
 
 # Requirements
 - .NET 8.0 or later
@@ -72,3 +72,5 @@ To remove them, use:
 To retrieve them, use:
 
 ```entity.GetComponent<YourComponentType>();```
+
+*not really
