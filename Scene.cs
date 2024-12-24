@@ -123,6 +123,15 @@ namespace SunflowerECS
             }
         }
 
+        public T? GetSystem<T>() where T : class, ISystem
+        {
+            if (_systems.TryGetValue(typeof(T), out ISystem? system))
+            {
+                return system as T;
+            }
+            return null;
+        }
+
         private uint Roll()
         {
             uint result = TrueRoll();
