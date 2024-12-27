@@ -34,3 +34,6 @@ bin/Debug/net8.0/SunflowerECS.dll
 .vs/ProjectEvaluation/sunflowerecs.strings.v9.bin
 .vs/ProjectEvaluation/sunflowerecs.projects.v9.bin
 .vs/ProjectEvaluation/sunflowerecs.metadata.v9.bin
+*.bin
+*.v2
+/.vs

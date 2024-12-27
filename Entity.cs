@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SunflowerECS
 {
-    public sealed class Entity : IDisposable
+    public sealed partial class Entity : IDisposable
     {
         public uint ID { get; internal set; }
 
-        private readonly Dictionary<Type, IComponent> components;
+        internal readonly Dictionary<Type, IComponent> components;
 
         private Scene scene;
 

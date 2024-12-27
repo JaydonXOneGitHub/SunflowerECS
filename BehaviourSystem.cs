@@ -41,7 +41,7 @@ namespace SunflowerECS
         {
             foreach (var component in behaviourComponents)
             {
-                component!.Draw();
+                component?.Draw();
             }
         }
 
@@ -49,8 +49,13 @@ namespace SunflowerECS
         {
             foreach (var component in behaviourComponents)
             {
-                component!.Update();
+                component?.Update();
             }
+        }
+
+        public void Dispose()
+        {
+            behaviourComponents.Clear();
         }
     }
 }

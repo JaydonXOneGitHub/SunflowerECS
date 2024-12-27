@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SunflowerECS
 {
-    public interface ISystem
+    public interface ISystem : IDisposable
     {
         void OnEntityAdded(Entity entity);
         void OnEntityRemoved(Entity entity);
