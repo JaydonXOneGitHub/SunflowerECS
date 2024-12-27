@@ -7,7 +7,7 @@ namespace SunflowerECS
     
     public sealed class Scene : IDisposable
     {
-        private readonly Dictionary<uint, Entity> _entities;
+        internal readonly Dictionary<uint, Entity> _entities;
     
         private readonly Dictionary<Type, ISystem> _systems;
     
