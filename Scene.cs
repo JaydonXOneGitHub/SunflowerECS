@@ -1,15 +1,15 @@
-﻿using SunflowerECS.Systems;
+using SunflowerECS.Systems;
 
 namespace SunflowerECS
 {
     public delegate void EntityEvent(Entity entity);
     public delegate void ComponentEvent(IComponent component);
 
-    public sealed class Scene : IDisposable
+    public sealed partial class Scene : IDisposable
     {
-        private readonly Dictionary<uint, Entity> _entities;
+        internal readonly Dictionary<uint, Entity> _entities;
 
-        private readonly Dictionary<Type, ISystem> _systems;
+        internal readonly Dictionary<Type, ISystem> _systems;
 
         private EntityEvent OnEntityAdded;
         private EntityEvent OnEntityRemoved;
@@ -146,6 +146,11 @@ namespace SunflowerECS
 
         public void Dispose()
         {
+            foreach (var system in _systems.Values)
+            {
+                system.Dispose();
+            }
+            _systems.Clear();
             foreach (var entity in _entities.Values)
             {
                 entity.Dispose();
