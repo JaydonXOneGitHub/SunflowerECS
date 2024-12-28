@@ -10,7 +10,7 @@ namespace SunflowerECS
     {
         public uint ID { get; internal set; }
 
-        public string Name { get; set; }
+        public string Name;
 
         internal readonly Dictionary<Type, IComponent> components;
         

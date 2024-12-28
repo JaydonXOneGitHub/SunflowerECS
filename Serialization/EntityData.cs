@@ -12,17 +12,23 @@ namespace SunflowerECS.Serialization
     {
         public HashSet<IComponent> Components { get; set; }
 
+        public string Name { get; set; }
+
         public static EntityData ToEntityData(Entity entity)
         {
             return new EntityData()
             {
-                Components = new(entity.components.Values)
+                Components = new(entity.components.Values),
+                Name = entity.Name
             };
         }
 
         public static Entity FromEntityData(EntityData entityData, Scene scene)
         {
-            Entity entity = new Entity(scene);
+            Entity entity = new Entity(scene)
+            {
+                Name = entityData.Name,
+            };
 
             foreach (var component in entityData.Components)
             {
