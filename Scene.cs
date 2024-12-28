@@ -11,11 +11,13 @@ namespace SunflowerECS
     
         private readonly Dictionary<Type, ISystem> _systems;
     
-        private EntityEvent OnEntityAdded;
-        private EntityEvent OnEntityRemoved;
+        private EntityEvent? OnEntityAdded;
+        private EntityEvent? OnEntityRemoved;
+
+        public object? Data { get; set; } = null;
     
-        internal ComponentEvent OnComponentAdded;
-        internal ComponentEvent OnComponentRemoved;
+        internal ComponentEvent? OnComponentAdded;
+        internal ComponentEvent? OnComponentRemoved;
     
         private uint nextID = 0;
     
@@ -52,6 +54,16 @@ namespace SunflowerECS
             }
     
             return removed;
+        }
+
+        public T GetDataAs<T>()
+        {
+            if (Data is T tData)
+            {
+                return tData;
+            }
+
+            throw new InvalidCastException($"Cannon cast {nameof(Data)} to {typeof(T)}");
         }
     
         public Entity Create()
