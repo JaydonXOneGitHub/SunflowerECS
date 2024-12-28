@@ -81,8 +81,13 @@ namespace SunflowerECS
             return entity;
         }
     
-        public void AddEntity(Entity entity)
+        public void AddEntity(Entity? entity)
         {
+            if (entity == null)
+            {
+                return;
+            }
+
             if (_entities.ContainsKey(entity.ID)) { return; }
 
             entitiesToAdd.Add(entity);
@@ -110,8 +115,13 @@ namespace SunflowerECS
             return null;
         }
     
-        public bool RemoveEntity(Entity entity)
+        public bool RemoveEntity(Entity? entity)
         {
+            if (entity == null)
+            {
+                return false;
+            }
+
             bool removed = _entities.Remove(entity.ID);
     
             if (removed)
@@ -190,6 +200,12 @@ namespace SunflowerECS
 
         private void AddQueuedEntities()
         {
+            if (entitiesToAdd.Count == 0)
+            {
+                // If there are no queued entities, do nothing
+                return;
+            }
+
             foreach (var entity in entitiesToAdd)
             {
                 _entities[entity.ID] = entity;
@@ -206,6 +222,12 @@ namespace SunflowerECS
 
         private void RemoveQueuedEntities()
         {
+            if (entitiesToRemove.Count == 0)
+            {
+                // If there are no queued entities, do nothing
+                return;
+            }
+
             foreach (var entity in entitiesToRemove)
             {
                 OnEntityRemoved?.Invoke(entity);
