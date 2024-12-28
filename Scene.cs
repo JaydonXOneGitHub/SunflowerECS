@@ -8,7 +8,7 @@ namespace SunflowerECS
     public sealed class Scene : IDisposable
     {
         internal readonly Dictionary<uint, Entity> _entities;
-    
+
         private readonly Dictionary<Type, ISystem> _systems;
     
         private EntityEvent? OnEntityAdded;
@@ -63,13 +63,16 @@ namespace SunflowerECS
                 return tData;
             }
 
-            throw new InvalidCastException($"Cannon cast {nameof(Data)} to {typeof(T)}");
+            throw new InvalidCastException($"Cannot cast {nameof(Data)} to {typeof(T)}");
         }
     
-        public Entity Create()
+        public Entity Create(string name = "Entity")
         {
-            Entity entity = new Entity(this);
-            entity.ID = nextID;
+            Entity entity = new Entity(this)
+            {
+                ID = nextID,
+                Name = name
+            };
             nextID++;
             _entities[entity.ID] = entity;
             return entity;
@@ -82,6 +85,11 @@ namespace SunflowerECS
             _entities[entity.ID] = entity;
     
             OnEntityAdded?.Invoke(entity);
+
+            foreach (var component in entity.components.Values)
+            {
+                OnComponentAdded?.Invoke(component);
+            }
         }
     
         public Entity? GetByID(uint id)
@@ -92,6 +100,19 @@ namespace SunflowerECS
             }
             return null;
         }
+
+        public Entity? GetEntityByName(string name)
+        {
+            foreach (var entity in _entities.Values)
+            {
+                if (entity.Name.Equals(name))
+                {
+                    return entity;
+                }
+            }
+
+            return null;
+        }
     
         public bool RemoveEntity(Entity entity)
         {
@@ -100,6 +121,11 @@ namespace SunflowerECS
             if (removed)
             {
                 OnEntityRemoved?.Invoke(entity);
+
+                foreach (var component in entity.components.Values)
+                {
+                    OnComponentRemoved?.Invoke(component);
+                }
             }
     
             return removed;
@@ -163,6 +189,16 @@ namespace SunflowerECS
                 entity.Dispose();
             }
             _entities.Clear();
+        }
+
+        private void AddQueuedEntities()
+        {
+
+        }
+
+        private void RemoveQueuedEntities()
+        {
+
         }
     }
 }

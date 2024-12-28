@@ -10,10 +10,29 @@ namespace SunflowerECS
     {
         public uint ID { get; internal set; }
 
+        public string Name { get; set; }
+
         internal readonly Dictionary<Type, IComponent> components;
         
         private Scene scene;
-        
+
+        public bool Enabled
+        { 
+            get => scene._entities.ContainsKey(ID);
+            set
+            {
+                if (value)
+                {
+                    scene.RemoveEntity(this);
+                }
+                else
+                {
+                    scene.AddEntity(this);
+                }
+            }
+
+        }
+
         internal Entity(Scene scene)
         {
             components = new Dictionary<Type, IComponent>();
@@ -23,7 +42,7 @@ namespace SunflowerECS
         public T AddComponent<T>() where T : class, IComponent, new()
         {
             T component = new T();
-            AddComponent<T>(component);
+            AddComponent(component);
             return component;
         }
         
