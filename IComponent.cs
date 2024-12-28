@@ -10,6 +10,8 @@ namespace SunflowerECS
     {
         Entity? Entity { get; set; }
 
+        string MyType { get; }
+
         Type GetRegisteredType();
     }
 }

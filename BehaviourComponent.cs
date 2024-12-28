@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SunflowerECS
@@ -11,6 +12,9 @@ namespace SunflowerECS
         public Entity? Entity { get; set; }
 
         public virtual Type GetRegisteredType() => typeof(BehaviourComponent);
+
+        [JsonPropertyName("type")]
+        public virtual string MyType => nameof(BehaviourComponent);
 
         public virtual void Dispose() { }
 

@@ -220,6 +220,8 @@ namespace SunflowerECS
             entitiesToAdd.Clear();
         }
 
+        public int EntityCount() => _entities.Values.Count;
+
         private void RemoveQueuedEntities()
         {
             if (entitiesToRemove.Count == 0)
