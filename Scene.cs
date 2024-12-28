@@ -9,6 +9,9 @@ namespace SunflowerECS
     {
         internal readonly Dictionary<uint, Entity> _entities;
 
+        private readonly HashSet<Entity> entitiesToAdd = [];
+        private readonly HashSet<Entity> entitiesToRemove = [];
+
         private readonly Dictionary<Type, ISystem> _systems;
     
         private EntityEvent? OnEntityAdded;
@@ -81,15 +84,8 @@ namespace SunflowerECS
         public void AddEntity(Entity entity)
         {
             if (_entities.ContainsKey(entity.ID)) { return; }
-    
-            _entities[entity.ID] = entity;
-    
-            OnEntityAdded?.Invoke(entity);
 
-            foreach (var component in entity.components.Values)
-            {
-                OnComponentAdded?.Invoke(component);
-            }
+            entitiesToAdd.Add(entity);
         }
     
         public Entity? GetByID(uint id)
@@ -120,12 +116,7 @@ namespace SunflowerECS
     
             if (removed)
             {
-                OnEntityRemoved?.Invoke(entity);
-
-                foreach (var component in entity.components.Values)
-                {
-                    OnComponentRemoved?.Invoke(component);
-                }
+                entitiesToRemove.Add(entity);
             }
     
             return removed;
@@ -149,6 +140,12 @@ namespace SunflowerECS
     
                 behaviourSystem.Draw();
             }
+        }
+
+        public void PrepareForNextIteration()
+        {
+            AddQueuedEntities();
+            RemoveQueuedEntities();
         }
     
         public void UpdateGeneral()
@@ -193,12 +190,32 @@ namespace SunflowerECS
 
         private void AddQueuedEntities()
         {
+            foreach (var entity in entitiesToAdd)
+            {
+                _entities[entity.ID] = entity;
 
+                OnEntityAdded?.Invoke(entity);
+
+                foreach (var component in entity.components.Values)
+                {
+                    OnComponentAdded?.Invoke(component);
+                }
+            }
+            entitiesToAdd.Clear();
         }
 
         private void RemoveQueuedEntities()
         {
+            foreach (var entity in entitiesToRemove)
+            {
+                OnEntityRemoved?.Invoke(entity);
 
+                foreach (var component in entity.components.Values)
+                {
+                    OnComponentRemoved?.Invoke(component);
+                }
+            }
+            entitiesToRemove.Clear();
         }
     }
 }
