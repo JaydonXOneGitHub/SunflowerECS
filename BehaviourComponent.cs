@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SunflowerECS
 {
-    public abstract class BehaviourComponent : IComponent
+    public abstract class BehaviourComponent : IComponent, IDisposable
     {
         public Entity? Entity { get; set; }
 

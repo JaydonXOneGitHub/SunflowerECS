@@ -106,6 +106,11 @@ namespace SunflowerECS
             foreach (var typeAndComponent in tempComponents)
             {
                 RemoveComponent(typeAndComponent.Value);
+
+                if (typeAndComponent.Value is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
             }
         
             components.Clear();

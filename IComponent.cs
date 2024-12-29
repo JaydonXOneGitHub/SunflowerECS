@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SunflowerECS
 {
-    public interface IComponent : IDisposable
+    public interface IComponent
     {
         Entity? Entity { get; set; }
 

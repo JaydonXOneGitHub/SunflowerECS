@@ -191,6 +191,16 @@ namespace SunflowerECS
     
         public void Dispose()
         {
+            foreach (var system in _systems.Values)
+            {
+                system.Dispose();
+                OnEntityAdded -= system.OnEntityAdded;
+                OnEntityRemoved -= system.OnEntityRemoved;
+                OnComponentAdded -= system.OnComponentAdded;
+                OnComponentRemoved -= system.OnComponentRemoved;
+            }
+            _systems.Clear();
+
             foreach (var entity in _entities.Values)
             {
                 entity.Dispose();
