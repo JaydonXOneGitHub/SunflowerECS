@@ -88,15 +88,16 @@ namespace SunflowerECS
             }
         }
         
-        public T? GetComponent<T>() where T : class, IComponent, new()
+        public T? GetComponent<T>() where T : class, IComponent
         {
-            T component = new();
-            return components[component.GetRegisteredType()] as T;
+            return components[TypeRegistry.RegisteredComponentTypes[typeof(T)]] as T;
         }
         
-        public bool HasComponent<T>() where T : class, IComponent, new()
+        public bool HasComponent<T>() where T : class, IComponent
         {
-            return GetComponent<T>() != null;
+            return components.ContainsKey(
+                TypeRegistry.RegisteredComponentTypes[typeof(T)]
+            );
         }
         
         public void Dispose()
