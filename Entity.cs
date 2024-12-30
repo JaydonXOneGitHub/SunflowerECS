@@ -62,6 +62,14 @@ namespace SunflowerECS
                 {
                     behaviourComponent.OnAdded();
                 }
+                else
+                {
+                    if (HasComponent<BehaviourComponent>())
+                    {
+                        var behaviour = GetComponent<BehaviourComponent>();
+                        behaviour?.OnOtherComponentAdded(component);
+                    }
+                }
         
                 scene.OnComponentAdded?.Invoke(component);
             }
@@ -83,7 +91,15 @@ namespace SunflowerECS
                 {
                     behaviourComponent.OnRemoved();
                 }
-        
+                else
+                {
+                    if (HasComponent<BehaviourComponent>())
+                    {
+                        var behaviour = GetComponent<BehaviourComponent>();
+                        behaviour?.OnOtherComponentRemoved(component);
+                    }
+                }
+
                 scene.OnComponentRemoved?.Invoke(component);
             }
         }

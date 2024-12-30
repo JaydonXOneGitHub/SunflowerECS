@@ -25,5 +25,9 @@ namespace SunflowerECS
         public virtual void OnAdded() { }
 
         public virtual void OnRemoved() { }
+
+        public virtual void OnOtherComponentAdded(IComponent component) { }
+        
+        public virtual void OnOtherComponentRemoved(IComponent component) { }
     }
 }
