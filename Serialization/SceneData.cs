@@ -49,6 +49,11 @@ namespace SunflowerECS.Serialization
 
         public static void SaveToJson(SceneData data, string jsonPath, JsonConverter<IComponent> converter)
         {
+            if (File.Exists(jsonPath))
+            {
+                File.Delete(jsonPath);
+            }
+
             using (var stream = new FileStream(jsonPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (var writer = new StreamWriter(stream))

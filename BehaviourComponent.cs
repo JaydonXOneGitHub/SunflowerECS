@@ -9,6 +9,7 @@ namespace SunflowerECS
 {
     public abstract class BehaviourComponent : IComponent, IDisposable
     {
+        [JsonIgnore]
         public Entity? Entity { get; set; }
 
         public virtual Type GetRegisteredType() => typeof(BehaviourComponent);
@@ -16,7 +17,10 @@ namespace SunflowerECS
         [JsonPropertyName("type")]
         public virtual string MyType => nameof(BehaviourComponent);
 
-        public virtual void Dispose() { }
+        public virtual void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
 
         public virtual void Update() { }
 
@@ -25,9 +29,5 @@ namespace SunflowerECS
         public virtual void OnAdded() { }
 
         public virtual void OnRemoved() { }
-
-        public virtual void OnOtherComponentAdded(IComponent component) { }
-        
-        public virtual void OnOtherComponentRemoved(IComponent component) { }
     }
 }

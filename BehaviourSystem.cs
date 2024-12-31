@@ -11,6 +11,8 @@ namespace SunflowerECS
     {
         private readonly HashSet<BehaviourComponent?> behaviourComponents = [];
 
+        public int BehaviourAmount => behaviourComponents.Count;
+
         public void OnEntityAdded(Entity entity)
         {
             //behaviourComponents.Add(entity.GetComponent<BehaviourComponent>());

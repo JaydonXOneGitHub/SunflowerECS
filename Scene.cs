@@ -1,4 +1,5 @@
 using SunflowerECS.Systems;
+using System.Text.Json.Serialization;
 
 namespace SunflowerECS
 {
@@ -17,6 +18,7 @@ namespace SunflowerECS
         private EntityEvent? OnEntityAdded;
         private EntityEvent? OnEntityRemoved;
 
+        [JsonIgnore]
         public object? Data { get; set; } = null;
     
         internal ComponentEvent? OnComponentAdded;
@@ -32,16 +34,18 @@ namespace SunflowerECS
     
         public bool AddSystem(ISystem system)
         {
-            bool valid = _systems.TryAdd(system.GetType(), system);
-            if (valid)
+            if (!_systems.ContainsKey(system.GetType()))
             {
                 _systems[system.GetType()] = system;
+
                 OnEntityAdded += system.OnEntityAdded;
                 OnComponentAdded += system.OnComponentAdded;
                 OnEntityRemoved += system.OnEntityRemoved;
                 OnComponentRemoved += system.OnComponentRemoved;
+
+                return true;
             }
-            return valid;
+            return false;
         }
     
         public bool RemoveSystem(ISystem system)
@@ -220,6 +224,13 @@ namespace SunflowerECS
             {
                 _entities[entity.ID] = entity;
 
+                if (entity.scene != null)
+                {
+                    continue;
+                }
+
+                entity.scene = this;
+
                 OnEntityAdded?.Invoke(entity);
 
                 foreach (var component in entity.components.Values)
@@ -243,6 +254,13 @@ namespace SunflowerECS
             foreach (var entity in entitiesToRemove)
             {
                 OnEntityRemoved?.Invoke(entity);
+
+                if (entity.scene != this)
+                {
+                    continue;
+                }
+
+                entity.scene = null;
 
                 foreach (var component in entity.components.Values)
                 {

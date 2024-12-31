@@ -23,16 +23,25 @@ namespace SunflowerECS.Serialization
             };
         }
 
-        public static Entity FromEntityData(EntityData entityData, Scene scene)
+        public static Entity FromEntityData(EntityData entityData, Scene scene, bool addToScene = true)
         {
-            Entity entity = new Entity(scene)
+            Entity entity;
+
+            if (addToScene)
             {
-                Name = entityData.Name,
-            };
+                entity = scene.Create(entityData.Name);
+            }
+            else
+            {
+                entity = new Entity(scene)
+                {
+                    Name = entityData.Name,
+                };
+            }
 
             foreach (var component in entityData.Components)
             {
-                entity.components.Add(component.GetRegisteredType(), component);
+                entity.AddComponent(component.GetType(), component);
             }
 
             return entity;
@@ -40,6 +49,11 @@ namespace SunflowerECS.Serialization
 
         public static void SaveToJson(EntityData data, string jsonPath, JsonConverter<IComponent> converter)
         {
+            if (File.Exists(jsonPath))
+            {
+                File.Delete(jsonPath);
+            }
+
             using (var stream = new FileStream(jsonPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (var writer = new StreamWriter(stream))
@@ -68,6 +82,7 @@ namespace SunflowerECS.Serialization
         public static Entity LoadEntityFromJson(
             string jsonPath, 
             Scene scene,
-            JsonConverter<IComponent> converter) => FromEntityData(LoadFromJson(jsonPath, converter), scene);
+            JsonConverter<IComponent> converter,
+            bool addToScene = true) => FromEntityData(LoadFromJson(jsonPath, converter), scene, addToScene);
     }
 }

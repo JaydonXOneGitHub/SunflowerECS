@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SunflowerECS
@@ -14,20 +15,33 @@ namespace SunflowerECS
 
         internal readonly Dictionary<Type, IComponent> components;
         
-        private Scene scene;
+        internal Scene? scene;
+
+        public Scene? Scene => scene;
+
+        [JsonIgnore]
+        public int ComponentCount => components.Count;
 
         public bool Enabled
         { 
-            get => scene._entities.ContainsKey(ID);
+            get
+            {
+                if (scene == null)
+                {
+                    return false;
+                }
+
+                return scene._entities.ContainsKey(ID);
+            }
             set
             {
                 if (value)
                 {
-                    scene.RemoveEntity(this);
+                    scene?.RemoveEntity(this);
                 }
                 else
                 {
-                    scene.AddEntity(this);
+                    scene?.AddEntity(this);
                 }
             }
 
@@ -45,6 +59,27 @@ namespace SunflowerECS
             AddComponent(component);
             return component;
         }
+
+        internal void AddComponent(Type componentType, IComponent component)
+        {
+            if (component.Entity != null)
+            {
+                return;
+            }
+
+            if (!components.ContainsKey(componentType))
+            {
+                components[componentType] = component;
+                component.Entity = this;
+
+                if (component is BehaviourComponent behaviourComponent)
+                {
+                    behaviourComponent.OnAdded();
+                }
+
+                scene?.OnComponentAdded?.Invoke(component);
+            }
+        }
         
         public void AddComponent<T>(T component) where T : class, IComponent
         {
@@ -53,67 +88,57 @@ namespace SunflowerECS
                 return;
             }
         
-            if (!components.ContainsKey(component.GetRegisteredType()))
+            if (!components.ContainsKey(typeof(T)))
             {
-                components[component.GetRegisteredType()] = component;
+                components[typeof(T)] = component;
                 component.Entity = this;
         
                 if (component is BehaviourComponent behaviourComponent)
                 {
                     behaviourComponent.OnAdded();
                 }
-                else
-                {
-                    if (HasComponent<BehaviourComponent>())
-                    {
-                        var behaviour = GetComponent<BehaviourComponent>();
-                        behaviour?.OnOtherComponentAdded(component);
-                    }
-                }
         
-                scene.OnComponentAdded?.Invoke(component);
+                scene?.OnComponentAdded?.Invoke(component);
             }
         }
         
-        public void RemoveComponent(IComponent component)
+        public void RemoveComponent<T>(T component) where T : class, IComponent
         {
             if (component.Entity == null)
             {
                 return;
             }
-        
-            if (components.ContainsKey(component.GetRegisteredType()))
+
+            bool removed = components.Remove(typeof(T));
+
+            if (removed)
             {
-                components.Remove(component.GetRegisteredType());
                 component.Entity = null;
         
                 if (component is BehaviourComponent behaviourComponent)
                 {
                     behaviourComponent.OnRemoved();
                 }
-                else
-                {
-                    if (HasComponent<BehaviourComponent>())
-                    {
-                        var behaviour = GetComponent<BehaviourComponent>();
-                        behaviour?.OnOtherComponentRemoved(component);
-                    }
-                }
 
-                scene.OnComponentRemoved?.Invoke(component);
+                scene?.OnComponentRemoved?.Invoke(component);
             }
         }
         
         public T? GetComponent<T>() where T : class, IComponent
         {
-            return components[TypeRegistry.RegisteredComponentTypes[typeof(T)]] as T;
+            if (!HasComponent<T>())
+            {
+                throw new InvalidOperationException(
+                    $"Entity does not have component of type: {TypeRegistry.RegisteredComponentTypes[typeof(T)]}"
+                );
+            }
+
+            return components[typeof(T)] as T;
         }
         
         public bool HasComponent<T>() where T : class, IComponent
         {
-            return components.ContainsKey(
-                TypeRegistry.RegisteredComponentTypes[typeof(T)]
-            );
+            return components.ContainsKey(typeof(T));
         }
         
         public void Dispose()
