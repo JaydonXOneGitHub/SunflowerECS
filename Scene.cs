@@ -6,26 +6,8 @@ namespace SunflowerECS
     public delegate void EntityEvent(Entity entity);
     public delegate void ComponentEvent(IComponent component);
     
-    public sealed class Scene : IDisposable
+    public sealed partial class Scene : IDisposable
     {
-        internal readonly Dictionary<uint, Entity> _entities;
-
-        private readonly HashSet<Entity> entitiesToAdd = [];
-        private readonly HashSet<Entity> entitiesToRemove = [];
-
-        private readonly Dictionary<Type, ISystem> _systems;
-    
-        private EntityEvent? OnEntityAdded;
-        private EntityEvent? OnEntityRemoved;
-
-        [JsonIgnore]
-        public object? Data { get; set; } = null;
-    
-        internal ComponentEvent? OnComponentAdded;
-        internal ComponentEvent? OnComponentRemoved;
-    
-        private uint nextID = 0;
-    
         public Scene()
         {
             _entities = [];
@@ -75,6 +57,11 @@ namespace SunflowerECS
     
         public Entity Create(string name = "Entity")
         {
+            if (nextID + 1 > MAX_ENTITY_COUNT)
+            {
+                throw new Exception("Max entity limit reached!");
+            }
+
             Entity entity = new Entity(this)
             {
                 ID = nextID,
@@ -90,6 +77,11 @@ namespace SunflowerECS
             if (entity == null)
             {
                 return;
+            }
+
+            if (entity.ID == INVALID_ID)
+            {
+                throw new EntityException("Entity has become invalid!");
             }
 
             if (_entities.ContainsKey(entity.ID)) { return; }
@@ -222,12 +214,12 @@ namespace SunflowerECS
 
             foreach (var entity in entitiesToAdd)
             {
-                _entities[entity.ID] = entity;
-
                 if (entity.scene != null)
                 {
                     continue;
                 }
+
+                _entities[entity.ID] = entity;
 
                 entity.scene = this;
 
@@ -253,12 +245,12 @@ namespace SunflowerECS
 
             foreach (var entity in entitiesToRemove)
             {
-                OnEntityRemoved?.Invoke(entity);
-
                 if (entity.scene != this)
                 {
                     continue;
                 }
+
+                OnEntityRemoved?.Invoke(entity);
 
                 entity.scene = null;
 

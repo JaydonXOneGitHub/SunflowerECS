@@ -47,10 +47,11 @@ namespace SunflowerECS
 
         }
 
-        internal Entity(Scene scene)
+        internal Entity(Scene scene, string name = "")
         {
             components = new Dictionary<Type, IComponent>();
             this.scene = scene;
+            Name = name;
         }
         
         public T AddComponent<T>() where T : class, IComponent, new()
@@ -62,6 +63,11 @@ namespace SunflowerECS
 
         internal void AddComponent(Type componentType, IComponent component)
         {
+            if (!IsValid())
+            {
+                throw new EntityException("Entity was disposed!");
+            }
+
             if (component.Entity != null)
             {
                 return;
@@ -83,6 +89,11 @@ namespace SunflowerECS
         
         public void AddComponent<T>(T component) where T : class, IComponent
         {
+            if (!IsValid())
+            {
+                throw new EntityException("Entity was disposed!");
+            }
+
             if (component.Entity != null)
             {
                 return;
@@ -102,8 +113,15 @@ namespace SunflowerECS
             }
         }
         
+
+
         public void RemoveComponent<T>(T component) where T : class, IComponent
         {
+            if (!IsValid())
+            {
+                throw new EntityException("Entity was disposed!");
+            }
+
             if (component.Entity == null)
             {
                 return;
@@ -124,8 +142,15 @@ namespace SunflowerECS
             }
         }
         
+
+
         public T? GetComponent<T>() where T : class, IComponent
         {
+            if (!IsValid())
+            {
+                throw new EntityException("Entity was disposed!");
+            }
+
             if (!HasComponent<T>())
             {
                 throw new InvalidOperationException(
@@ -136,13 +161,26 @@ namespace SunflowerECS
             return components[typeof(T)] as T;
         }
         
+
+
         public bool HasComponent<T>() where T : class, IComponent
         {
+            if (!IsValid())
+            {
+                throw new EntityException("Entity was disposed!");
+            }
             return components.ContainsKey(typeof(T));
         }
         
+
+
         public void Dispose()
         {
+            if (!IsValid())
+            {
+                throw new EntityException("Entity was already disposed!");
+            }
+
             var tempComponents = new Dictionary<Type, IComponent>(components);
         
             foreach (var typeAndComponent in tempComponents)
@@ -157,6 +195,12 @@ namespace SunflowerECS
         
             components.Clear();
             tempComponents.Clear();
+
+            ID = Scene.INVALID_ID;
         }
+
+
+
+        public bool IsValid() => ID != Scene.INVALID_ID;
     }
 }
