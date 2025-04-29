@@ -196,6 +196,8 @@ namespace SunflowerECS
             components.Clear();
             tempComponents.Clear();
 
+            scene?.RemoveEntity(this);
+
             ID = Scene.INVALID_ID;
         }
 
