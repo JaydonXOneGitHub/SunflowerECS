@@ -104,9 +104,9 @@ namespace SunflowerECS
                 components[typeof(T)] = component;
                 component.Entity = this;
         
-                if (component is BehaviourComponent behaviourComponent)
+                if (component is IStateComponent stateComponent)
                 {
-                    behaviourComponent.OnAdded();
+                    stateComponent.OnAdded();
                 }
         
                 scene?.OnComponentAdded?.Invoke(component);
@@ -133,9 +133,9 @@ namespace SunflowerECS
             {
                 component.Entity = null;
         
-                if (component is BehaviourComponent behaviourComponent)
+                if (component is IStateComponent stateComponent)
                 {
-                    behaviourComponent.OnRemoved();
+                    stateComponent.OnRemoved();
                 }
 
                 scene?.OnComponentRemoved?.Invoke(component);
