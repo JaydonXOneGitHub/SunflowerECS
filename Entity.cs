@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace SunflowerECS
 {
-    public sealed class Entity
+    public sealed class Entity : IDisposable
     {
         public uint ID { get; internal set; }
 
         public string Name;
 
         internal readonly Dictionary<Type, IComponent> components;
-        
+
         internal Scene? scene;
 
         public Scene? Scene => scene;
@@ -23,7 +23,7 @@ namespace SunflowerECS
         public int ComponentCount => components.Count;
 
         public bool Enabled
-        { 
+        {
             get
             {
                 if (scene == null)
@@ -49,14 +49,16 @@ namespace SunflowerECS
 
         internal Entity(Scene scene, string name = "")
         {
-            components = new Dictionary<Type, IComponent>();
+            components = [];
+
             this.scene = scene;
+
             Name = name;
         }
-        
+
         public T AddComponent<T>() where T : class, IComponent, new()
         {
-            T component = new T();
+            T component = new();
             AddComponent(component);
             return component;
         }
@@ -76,6 +78,7 @@ namespace SunflowerECS
             if (!components.ContainsKey(componentType))
             {
                 components[componentType] = component;
+
                 component.Entity = this;
 
                 if (component is BehaviourComponent behaviourComponent)
@@ -86,36 +89,13 @@ namespace SunflowerECS
                 scene?.OnComponentAdded?.Invoke(component);
             }
         }
-        
+
         public void AddComponent<T>(T component) where T : class, IComponent
         {
-            if (!IsValid())
-            {
-                throw new EntityException("Entity was disposed!");
-            }
-
-            if (component.Entity != null)
-            {
-                return;
-            }
-        
-            if (!components.ContainsKey(typeof(T)))
-            {
-                components[typeof(T)] = component;
-                component.Entity = this;
-        
-                if (component is IStateComponent stateComponent)
-                {
-                    stateComponent.OnAdded();
-                }
-        
-                scene?.OnComponentAdded?.Invoke(component);
-            }
+            AddComponent(component.GetType(), component);
         }
-        
 
-
-        public void RemoveComponent<T>(T component) where T : class, IComponent
+        public void RemoveComponent(Type componentType, IComponent component)
         {
             if (!IsValid())
             {
@@ -127,12 +107,12 @@ namespace SunflowerECS
                 return;
             }
 
-            bool removed = components.Remove(typeof(T));
+            bool removed = components.Remove(componentType);
 
             if (removed)
             {
                 component.Entity = null;
-        
+
                 if (component is IStateComponent stateComponent)
                 {
                     stateComponent.OnRemoved();
@@ -141,7 +121,16 @@ namespace SunflowerECS
                 scene?.OnComponentRemoved?.Invoke(component);
             }
         }
-        
+
+        public void RemoveComponent<T>(T component) where T : class, IComponent
+        {
+            RemoveComponent(typeof(T), component);
+        }
+
+        public void RemoveComponent(IComponent component)
+        {
+            RemoveComponent(component.GetType(), component);
+        }
 
 
         public T? GetComponent<T>() where T : class, IComponent
@@ -160,18 +149,23 @@ namespace SunflowerECS
 
             return components[typeof(T)] as T;
         }
-        
+
 
 
         public bool HasComponent<T>() where T : class, IComponent
+        {
+            return HasComponent(typeof(T));
+        }
+
+        public bool HasComponent(Type componentType)
         {
             if (!IsValid())
             {
                 throw new EntityException("Entity was disposed!");
             }
-            return components.ContainsKey(typeof(T));
+            return components.ContainsKey(componentType);
         }
-        
+
 
 
         public void Dispose()
@@ -182,7 +176,7 @@ namespace SunflowerECS
             }
 
             var tempComponents = new Dictionary<Type, IComponent>(components);
-        
+
             foreach (var typeAndComponent in tempComponents)
             {
                 RemoveComponent(typeAndComponent.Value);
@@ -192,7 +186,7 @@ namespace SunflowerECS
                     disposable.Dispose();
                 }
             }
-        
+
             components.Clear();
             tempComponents.Clear();
 
@@ -204,5 +198,33 @@ namespace SunflowerECS
 
 
         public bool IsValid() => ID != Scene.INVALID_ID;
+
+        public Dictionary<Type, IComponent> GetComponents() => components;
+
+        public T? GetComponentLinear<T>(int iterationCount = 0) where T : class, IComponent
+        {
+            foreach (var component in components.Values)
+            {
+                if (component is T tComponent)
+                {
+                    if (iterationCount > 0)
+                    {
+                        iterationCount--;
+                        continue;
+                    }
+
+                    return tComponent;
+                }
+            }
+
+            return null;
+        }
+
+        public bool TryGetComponentLinear<T>(out T? component, int iterationCount = 0) where T : class, IComponent
+        {
+            component = GetComponentLinear<T>(iterationCount);
+
+            return component != null;
+        }
     }
 }

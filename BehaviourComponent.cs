@@ -10,7 +10,7 @@ namespace SunflowerECS
     public abstract class BehaviourComponent : IComponent, IDisposable
     {
         [JsonIgnore]
-        public Entity? Entity { get; set; }
+        public virtual Entity? Entity { get; set; }
 
         public virtual Type GetRegisteredType() => typeof(BehaviourComponent);
 

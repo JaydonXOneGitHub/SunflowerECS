@@ -52,7 +52,7 @@ Create an Entity by doing this:
 
 ```Entity entity = scene.Create();```
 
-The Entity in question will have a randomly generated ID.
+The Entity in question will have a unique ID.
 
 Attach components by using:
 
