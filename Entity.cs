@@ -209,6 +209,11 @@ namespace SunflowerECS
 
         public T? GetComponentLinear<T>(int iterationCount = 0) where T : class, IComponent
         {
+            if (!IsValid())
+            {
+                throw new EntityException("Entity was disposed!");
+            }
+
             foreach (var component in components.Values)
             {
                 if (component is T tComponent)
