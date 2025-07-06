@@ -15,25 +15,47 @@ namespace SunflowerECS
             {
                 base.Entity = value;
 
-                foreach (var component in _components)
-                {
-                    var ce = component.Entity;
+                PrepareComponents(value);
+            }
+        }
 
-                    if (ce != null && ce.HasComponent(component.GetType()))
+        private void PrepareComponents(Entity? value)
+        {
+            foreach (var bc in behaviourComponents)
+            {
+                bc.OnRemoved();
+            }
+
+            foreach (var component in _components)
+            {
+                var ce = component.Entity;
+
+                if (ce != null && ce.HasComponent(component.GetType()))
+                {
+                    var comparer = ce.GetComponent(component.GetType());
+
+                    if (ReferenceEquals(comparer, component))
                     {
                         ce.RemoveComponent(component);
                     }
-
-                    component.Entity = value;
                 }
+
+                component.Entity = value;
+            }
+
+            foreach (var bc in behaviourComponents)
+            {
+                bc.OnAdded();
             }
         }
 
         private readonly List<T> _components;
+        private readonly List<BehaviourComponent> behaviourComponents;
 
         public ComponentCollecton()
         {
             _components = [];
+            behaviourComponents = [];
         }
 
         public T AddComponent()
@@ -55,6 +77,11 @@ namespace SunflowerECS
 
             _components.Add(component);
 
+            if (component is BehaviourComponent bc)
+            {
+                behaviourComponents.Add(bc);
+            }
+
             return component;
         }
 
@@ -63,23 +90,17 @@ namespace SunflowerECS
 
         public override void Update()
         {
-            foreach (var component in _components)
+            foreach (var behaviourComponent in behaviourComponents)
             {
-                if (component is BehaviourComponent behaviourComponent)
-                {
-                    behaviourComponent.Update();
-                }
+                behaviourComponent.Update();
             }
         }
 
         public override void Draw()
         {
-            foreach (var component in _components)
+            foreach (var behaviourComponent in behaviourComponents)
             {
-                if (component is BehaviourComponent behaviourComponent)
-                {
-                    behaviourComponent.Draw();
-                }
+                behaviourComponent.Draw();
             }
         }
 

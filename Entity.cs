@@ -133,21 +133,27 @@ namespace SunflowerECS
         }
 
 
-        public T? GetComponent<T>() where T : class, IComponent
+        public IComponent GetComponent(Type componentType)
         {
             if (!IsValid())
             {
                 throw new EntityException("Entity was disposed!");
             }
 
-            if (!HasComponent<T>())
+            if (!HasComponent(componentType))
             {
                 throw new InvalidOperationException(
-                    $"Entity does not have component of type: {TypeRegistry.RegisteredComponentTypes[typeof(T)]}"
+                    $"Entity does not have component of type: {TypeRegistry.RegisteredComponentTypes[componentType]}"
                 );
             }
 
-            return components[typeof(T)] as T;
+            return components[componentType];
+        }
+
+
+        public T? GetComponent<T>() where T : class, IComponent
+        {
+            return GetComponent(typeof(T)) as T;
         }
 
 
